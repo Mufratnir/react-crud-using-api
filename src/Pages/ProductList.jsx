@@ -46,10 +46,7 @@ export default function ProductList() {
     <div className="p-10">
       <div className="flex justify-between mb-5">
         <h1 className="text-2xl font-bold">Products</h1>
-        <Link
-          to="/create"
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-        >
+        <Link to="/create" className="bg-blue-600 text-white px-4 py-2 rounded">
           Add Product
         </Link>
       </div>
@@ -74,11 +71,7 @@ export default function ProductList() {
                 <td className="border p-2">{p.category?.name || "-"}</td>
                 <td className="border p-2">
                   {p.thumbnail ? (
-                    <img
-                      src={`${p.thumbnail}`}
-                      className="w-12"
-                      alt={p.name}
-                    />
+                    <img src={`${p.thumbnail}`} className="w-12" alt={p.name} />
                   ) : (
                     <span className="text-gray-400">No image</span>
                   )}
@@ -87,11 +80,11 @@ export default function ProductList() {
                   {p.status ? "Active" : "Inactive"}
                 </td>
                 <td className="border p-2 space-x-2">
-                  <Link
-                    to={`/edit/${p.id}`}
-                    className="text-blue-600"
-                  >
+                  <Link to={`/edit/${p.id}`} className="text-blue-600">
                     Edit
+                  </Link>
+                  <Link>
+                    <button className="text-green-600">Details</button>
                   </Link>
                   <button
                     onClick={() => deleteProduct(p.id)}
@@ -106,6 +99,5 @@ export default function ProductList() {
         </table>
       )}
     </div>
-    
   );
 }

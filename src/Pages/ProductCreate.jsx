@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
+import RichTextEditor from "../Components/RichTextEditor";
 
 export default function ProductCreate() {
   const [categories, setCategories] = useState([]);
@@ -61,6 +62,7 @@ export default function ProductCreate() {
           <option value="0">Inactive</option>
         </select>
 
+        <RichTextEditor onChange={(html) => setForm({ ...form, description: html })} />
         <button className="bg-green-600 text-white px-4 py-2 rounded">
           Save
         </button>
