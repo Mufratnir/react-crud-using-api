@@ -68,7 +68,7 @@ export default function ProductList() {
             {products.map((p) => (
               <tr key={p.id}>
                 <td className="border p-2">{p.name}</td>
-                <td className="border p-2">{p.category?.name || "-"}</td>
+                <td className="border p-2">{p.category || "-"}</td>
                 <td className="border p-2">
                   {p.thumbnail ? (
                     <img src={`${p.thumbnail}`} className="w-12" alt={p.name} />
@@ -83,7 +83,7 @@ export default function ProductList() {
                   <Link to={`/edit/${p.id}`} className="text-blue-600">
                     Edit
                   </Link>
-                  <Link>
+                  <Link to={`/details/${p.id}`}>
                     <button className="text-green-600">Details</button>
                   </Link>
                   <button

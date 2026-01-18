@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
 import { useNavigate } from "react-router-dom";
-import TiptapEditor from "../Components/ TiptapEditor";
+import TiptapEditor from "../Components/TiptapEditor";
 
 export default function ProductCreate() {
   const [categories, setCategories] = useState([]);
