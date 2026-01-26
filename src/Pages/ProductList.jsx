@@ -7,10 +7,24 @@ export default function ProductList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const [search, setSearch] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const [page, setPage] = useState(1);
+  const [meta, setMeta] = useState(null);
+
   const fetchProducts = async () => {
     try {
-      const res = await api.get("/products");
+      setLoading(true);
+      const res = await api.get("/products", {
+        params: {
+          search: searchText,
+          page,
+          per_page: 2,
+        },
+      });
+
       setProducts(res?.data?.data || []);
+      setMeta(res?.data?.meta || null);
     } catch (err) {
       console.error(err);
       setError("Failed to load products");
@@ -32,7 +46,7 @@ export default function ProductList() {
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [searchText, page]);
 
   if (loading) {
     return <p className="p-10 text-gray-600">Loading products...</p>;
@@ -44,59 +58,140 @@ export default function ProductList() {
 
   return (
     <div className="p-10">
-      <div className="flex justify-between mb-5">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-5">
         <h1 className="text-2xl font-bold">Products</h1>
-        <Link to="/create" className="bg-blue-600 text-white px-4 py-2 rounded">
-          Add Product
-        </Link>
+
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setSearchText(search);
+                setPage(1);
+              }
+            }}
+            placeholder="Search product..."
+            className="border px-3 py-2 rounded w-64"
+          />
+          <button
+            onClick={() => {
+              setSearchText(search);
+              setPage(1);
+            }}
+            className="bg-gray-700 text-white px-4 py-2 rounded"
+          >
+            Search
+          </button>
+
+          <Link
+            to="/create"
+            className="bg-blue-600 text-white px-4 py-2 rounded"
+          >
+            Add Product
+          </Link>
+        </div>
       </div>
 
       {products.length === 0 ? (
         <p className="text-gray-600">No products found.</p>
       ) : (
-        <table className="w-full border">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-2 border">Name</th>
-              <th className="p-2 border">Category</th>
-              <th className="p-2 border">Image</th>
-              <th className="p-2 border">Status</th>
-              <th className="p-2 border">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((p) => (
-              <tr key={p.id}>
-                <td className="border p-2">{p.name}</td>
-                <td className="border p-2">{p.category || "-"}</td>
-                <td className="border p-2">
-                  {p.thumbnail ? (
-                    <img src={`${p.thumbnail}`} className="w-12" alt={p.name} />
-                  ) : (
-                    <span className="text-gray-400">No image</span>
-                  )}
-                </td>
-                <td className="border p-2">
-                  {p.status ? "Active" : "Inactive"}
-                </td>
-                <td className="border p-2 space-x-2">
-                  <Link to={`/edit/${p.id}`} className="text-blue-600">
-                    Edit
-                  </Link>
-                  <Link to={`/details/${p.id}`}>
-                    <button className="text-green-600">Details</button>
-                  </Link>
-                  <button
-                    onClick={() => deleteProduct(p.id)}
-                    className="text-red-600"
-                  >
-                    Delete
-                  </button>
-                </td>
+        <>
+          <table className="w-full border">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="p-2 border">Name</th>
+                <th className="p-2 border">Category</th>
+                <th className="p-2 border">Image</th>
+                <th className="p-2 border">Status</th>
+                <th className="p-2 border">Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {products.map((p) => (
+                <tr key={p.id}>
+                  <td className="border p-2">{p.name}</td>
+                  <td className="border p-2">
+                    {p.category?.name ?? "-"}
+                  </td>
+                  <td className="border p-2">
+                    {p.thumbnail ? (
+                      <img
+                        src={`http://127.0.0.1:8000/storage/${p.thumbnail}`}
+                        className="w-12 h-12 object-cover rounded"
+                        alt={p.name}
+                        onError={(e) => (e.target.style.display = "none")}
+                      />
+                    ) : (
+                      <span className="text-gray-400">No image</span>
+                    )}
+                  </td>
+                  <td className="border p-2">
+                    {p.status ? "Active" : "Inactive"}
+                  </td>
+                  <td className="border p-2 space-x-2">
+                    <Link to={`/edit/${p.id}`} className="text-blue-600">
+                      Edit
+                    </Link>
+                    <Link to={`/details/${p.id}`}>
+                      <button className="text-green-600">Details</button>
+                    </Link>
+                    <button
+                      onClick={() => deleteProduct(p.id)}
+                      className="text-red-600"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {meta && (
+            <div className="flex justify-between items-center mt-4">
+              <p className="text-sm text-gray-600">
+                Page {meta.current_page} of {meta.last_page}
+              </p>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setPage(meta.current_page - 1)}
+                  disabled={meta.current_page === 1}
+                  className="w-10 h-10 border rounded flex items-center justify-center disabled:opacity-40"
+                >
+                  ‹
+                </button>
+
+                {[...Array(meta.last_page)].map((_, i) => {
+                  const pageNum = i + 1;
+                  return (
+                    <button
+                      key={pageNum}
+                      onClick={() => setPage(pageNum)}
+                      className={`w-10 h-10 rounded flex items-center justify-center border
+                        ${
+                          meta.current_page === pageNum
+                            ? "bg-blue-400 text-white border-blue-400"
+                            : "hover:bg-gray-100"
+                        }`}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
+
+                <button
+                  onClick={() => setPage(meta.current_page + 1)}
+                  disabled={meta.current_page === meta.last_page}
+                  className="w-10 h-10 border rounded flex items-center justify-center disabled:opacity-40"
+                >
+                  ›
+                </button>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
