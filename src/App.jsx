@@ -5,15 +5,38 @@ import ProductEdit from "./Pages/ProductEdit.jsx";
 import ProductDetails from "./Pages/ProductDetails.jsx";
 function App() {
   return (
-     <BrowserRouter>
-       <Routes>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<ProductList />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
-            <Route path="/" element={<ProductList />} />
-            <Route path="/create" element={<ProductCreate />} />
-            <Route path="/details/:id" element={<ProductDetails />} />
-            <Route path="/edit/:id" element={<ProductEdit />} />
-          </Routes>
-        </BrowserRouter>
+        <Route
+          path="/create"
+          element={
+            <RequireAuth>
+              <ProductCreate />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/edit/:id"
+          element={
+            <RequireAuth>
+              <ProductEdit />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/details/:id"
+          element={
+            <RequireAuth>
+              <ProductDetails />
+            </RequireAuth>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

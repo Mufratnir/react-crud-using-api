@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
 import { Link } from "react-router-dom";
+import SearchBar from "../Components/search";
+import Pagination from "../Components/pagination";
 
 export default function ProductList() {
   const [products, setProducts] = useState([]);
@@ -62,28 +64,15 @@ export default function ProductList() {
         <h1 className="text-2xl font-bold">Products</h1>
 
         <div className="flex gap-2">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                setSearchText(search);
-                setPage(1);
-              }
-            }}
-            placeholder="Search product..."
-            className="border px-3 py-2 rounded w-64"
-          />
-          <button
-            onClick={() => {
+          <SearchBar
+            search={search}
+            setSearch={setSearch}
+            onSearch={() => {
               setSearchText(search);
               setPage(1);
             }}
-            className="bg-gray-700 text-white px-4 py-2 rounded"
-          >
-            Search
-          </button>
+            placeholder="Search product..."
+          />
 
           <Link
             to="/create"
@@ -149,47 +138,7 @@ export default function ProductList() {
             </tbody>
           </table>
           {meta && (
-            <div className="flex justify-between items-center mt-4">
-              <p className="text-sm text-gray-600">
-                Page {meta.current_page} of {meta.last_page}
-              </p>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setPage(meta.current_page - 1)}
-                  disabled={meta.current_page === 1}
-                  className="w-10 h-10 border rounded flex items-center justify-center disabled:opacity-40"
-                >
-                  ‹
-                </button>
-
-                {[...Array(meta.last_page)].map((_, i) => {
-                  const pageNum = i + 1;
-                  return (
-                    <button
-                      key={pageNum}
-                      onClick={() => setPage(pageNum)}
-                      className={`w-10 h-10 rounded flex items-center justify-center border
-                        ${
-                          meta.current_page === pageNum
-                            ? "bg-blue-400 text-white border-blue-400"
-                            : "hover:bg-gray-100"
-                        }`}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                })}
-
-                <button
-                  onClick={() => setPage(meta.current_page + 1)}
-                  disabled={meta.current_page === meta.last_page}
-                  className="w-10 h-10 border rounded flex items-center justify-center disabled:opacity-40"
-                >
-                  ›
-                </button>
-              </div>
-            </div>
+            <Pagination meta={meta} onPageChange={(p) => setPage(p)} />
           )}
         </>
       )}
