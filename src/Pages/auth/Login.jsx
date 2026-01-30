@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../auth/useAuth"; // hook from AuthContext
+import { useAuth } from "../../auth/AuthProvider";
+import api from "../../api/axios";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth(); // get login function from context
+  const { setUser, setAccessToken } = useAuth();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -16,8 +17,19 @@ export default function Login() {
     setError("");
 
     try {
-      await login(form.email, form.password);
-      navigate("/ProductList"); // redirect after login
+      const res = await api.post("/login", {
+        email: form.email,
+        password: form.password,
+      });
+
+      const token =  res.data.data.token;
+      const user =  res.data.data.user;
+
+      setAccessToken(token);
+      setUser(user);
+      localStorage.setItem("token", token);
+
+      navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
     }

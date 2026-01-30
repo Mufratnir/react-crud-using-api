@@ -1,19 +1,15 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:4000/api",
-  headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  },
+  baseURL: "http://localhost:8000/api",
 });
 
-export const setAuthToken = (token) => {
+api.interceptors.request.use((config) => {
+  const token = window.__AUTH_TOKEN__; // temp holder
   if (token) {
-    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  } else {
-    delete api.defaults.headers.common["Authorization"];
+    config.headers.Authorization = `Bearer ${token}`; 
   }
-};
+  return config;
+});
 
 export default api;

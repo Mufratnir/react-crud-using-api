@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../auth/useAuth"; 
-
+import { useAuth } from "../../auth/AuthProvider";
+import api from "../../api/axios";
 
 
 export default function Signup() {
+  
   const navigate = useNavigate();
-  const { register } = useAuth();
+  const { setUser, setAccessToken } = useAuth();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -24,13 +25,21 @@ export default function Signup() {
       return;
     }
     try {
-      await register({
+      const res = await api.post("/register", {
         name: form.name,
         email: form.email,
         password: form.password,
         password_confirmation: form.confirmPassword,
       });
-      navigate("/ProductList");
+
+      const token = res.data.data.token 
+      const user = res.data.data.user 
+
+      setAccessToken(token);
+      setUser(user);
+      localStorage.setItem("token", token);
+
+      navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");
     }

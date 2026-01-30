@@ -3,6 +3,7 @@ import api from "../api/axios";
 import { Link } from "react-router-dom";
 import SearchBar from "../Components/search";
 import Pagination from "../Components/pagination";
+import { useAuth } from "../auth/AuthProvider";
 
 export default function ProductList() {
   const [products, setProducts] = useState([]);
@@ -13,15 +14,20 @@ export default function ProductList() {
   const [searchText, setSearchText] = useState("");
   const [page, setPage] = useState(1);
   const [meta, setMeta] = useState(null);
+  const { accessToken } = useAuth();
 
   const fetchProducts = async () => {
+    console.log(accessToken);
     try {
       setLoading(true);
-      const res = await api.get("/products", {
+      const res = await api.get("/v1/products", {
         params: {
           search: searchText,
           page,
           per_page: 2,
+        },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
       });
 
@@ -38,7 +44,7 @@ export default function ProductList() {
   const deleteProduct = async (id) => {
     if (!window.confirm("Delete product?")) return;
     try {
-      await api.delete(`/products/${id}`);
+      await api.delete(`/v1/products/${id}`);
       fetchProducts();
     } catch (err) {
       console.error(err);
@@ -101,9 +107,7 @@ export default function ProductList() {
               {products.map((p) => (
                 <tr key={p.id}>
                   <td className="border p-2">{p.name}</td>
-                  <td className="border p-2">
-                    {p.category?.name ?? "-"}
-                  </td>
+                  <td className="border p-2">{p.category?.name ?? "-"}</td>
                   <td className="border p-2">
                     {p.thumbnail ? (
                       <img
@@ -137,9 +141,7 @@ export default function ProductList() {
               ))}
             </tbody>
           </table>
-          {meta && (
-            <Pagination meta={meta} onPageChange={(p) => setPage(p)} />
-          )}
+          {meta && <Pagination meta={meta} onPageChange={(p) => setPage(p)} />}
         </>
       )}
     </div>
