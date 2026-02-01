@@ -39,7 +39,7 @@ export default function Signup() {
       setUser(user);
       localStorage.setItem("token", token);
 
-      navigate("/");
+      navigate("/VerifyEmail");
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed");
     }

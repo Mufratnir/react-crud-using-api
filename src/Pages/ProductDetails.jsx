@@ -9,8 +9,9 @@ function ProductDetails() {
   useEffect(() => {
     api
       .get(`/products/${id}`)
-      .then((res) => setProduct(res.data.data))
+      .then((res) => setProduct(res.data.data) , console.log(setProduct))
       .catch((err) => console.error(err));
+     
   }, [id]);
 
   if (!product) {
