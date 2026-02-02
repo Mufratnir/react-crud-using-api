@@ -7,6 +7,7 @@ export default function ResetPassword() {
   const navigate = useNavigate();
 
   const token = params.get("token"); // from email link
+  console.log(token)
   const email = params.get("email"); // from email link
 
   const [password, setPassword] = useState("");
@@ -31,6 +32,7 @@ export default function ResetPassword() {
         password,
         password_confirmation: confirm,
       });
+      
       setMessage("Password has been reset successfully!");
       navigate("/login"); // redirect to login page
     } catch (err) {

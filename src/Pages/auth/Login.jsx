@@ -70,7 +70,7 @@ export default function Login() {
         </p>
         <p className="text-sm mt-1">
           Forgot password?{" "}
-          <Link to="/forgot-password" className="text-red-600">
+          <Link to="/ForgotPassword" className="text-red-600">
             Reset here
           </Link>
         </p>

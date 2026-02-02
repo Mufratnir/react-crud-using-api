@@ -8,6 +8,8 @@ import Register from "./Pages/auth/Signup.jsx";
 import VerifyEmail from "./Pages/auth/VerifyEmail";
 import Navbar from "./Components/Navbar.jsx";
 import EmailVerified from './Pages/auth/EmailVerified';
+import ForgotPassword from "./Pages/auth/ForgotPassword.jsx";
+import ResetPassword from './Pages/auth/ResetPassword.jsx';
 function App() {
   return (
     <>
@@ -22,7 +24,10 @@ function App() {
           <Route path="/details/:id" element={<ProductDetails />} />
           <Route path="/VerifyEmail" element={<VerifyEmail />} />
           <Route path="/EmailVerified" element={<EmailVerified />} />
-
+          <Route path="/ForgotPassword" element={<ForgotPassword />} />
+          <Route path="/ResetPassword" element={<ResetPassword />} />
+          
+          
         </Routes>
       </BrowserRouter>
     </>
